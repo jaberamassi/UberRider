@@ -22,6 +22,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.jaber.uberrider.Utils.UserUtils
 import com.jaber.uberrider.common.Common
 import com.jaber.uberrider.databinding.ActivitySplashScreenBinding
 import com.jaber.uberrider.model.RiderInfoModel
@@ -52,7 +54,9 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        if (auth != null && listener != null) auth.removeAuthStateListener(listener)
+        if (auth != null && listener != null) {
+            auth.removeAuthStateListener(listener)
+        }
         super.onStop()
     }
 
@@ -77,6 +81,19 @@ class SplashScreenActivity : AppCompatActivity() {
         listener = FirebaseAuth.AuthStateListener { myAuth ->
             val user = myAuth.currentUser
             if (user != null){
+
+                // Lecture #15 Retrieve the current registration token
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.w("TOKEN", "Fetching FCM registration token failed", task.exception)
+                        return@addOnCompleteListener
+                    }
+
+                    // Get new FCM registration token
+                    val token = task.result
+                    Log.d("TOKEN", token)
+                    UserUtils.updateToken(this@SplashScreenActivity, token)
+                }
                 checkUserFromFirebase()
 
             }else{
@@ -136,36 +153,41 @@ class SplashScreenActivity : AppCompatActivity() {
 
         //Event
         btnContinue.setOnClickListener {
-            if (etFirstName.text.toString().isEmpty()) {
-                Toast.makeText(this, "Please enter First Name", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            } else if (etLastName.text.toString().isEmpty()) {
-                Toast.makeText(this, "Please enter Last Name", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            } else if (etPhone.text.toString().isEmpty()) {
-                Toast.makeText(this, "Please enter Phone Number", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            } else {
-                val rider = RiderInfoModel()
+            when {
+                etFirstName.text.toString().isEmpty() -> {
+                    Toast.makeText(this, "Please enter First Name", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                etLastName.text.toString().isEmpty() -> {
+                    Toast.makeText(this, "Please enter Last Name", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                etPhone.text.toString().isEmpty() -> {
+                    Toast.makeText(this, "Please enter Phone Number", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                else -> {
+                    val rider = RiderInfoModel()
 
-                rider.firstName = etFirstName.text.toString()
-                rider.lastName = etLastName.text.toString()
-                rider.phoneNumber = etPhone.text.toString()
+                    rider.firstName = etFirstName.text.toString()
+                    rider.lastName = etLastName.text.toString()
+                    rider.phoneNumber = etPhone.text.toString()
 
-                //Upload to firebase database
-                riderInfoRef.child(currentUserUid)
-                    .setValue(rider)
-                    .addOnFailureListener { exception ->
-                        Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
-                        dialog.dismiss()
-                        binding.progressBar.visibility = View.GONE
-                    }.addOnSuccessListener {
-                        Toast.makeText(this, "Register Success", Toast.LENGTH_LONG).show()
-                        dialog.dismiss()
+                    //Upload to firebase database
+                    riderInfoRef.child(currentUserUid)
+                        .setValue(rider)
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(this, exception.message, Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
+                            binding.progressBar.visibility = View.GONE
+                        }.addOnSuccessListener {
+                            Toast.makeText(this, "Register Success", Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
 
-                        goToHomeActivity(rider)
-                        binding.progressBar.visibility = View.GONE
-                    }
+                            goToHomeActivity(rider)
+                            binding.progressBar.visibility = View.GONE
+                        }
+                }
             }
         }
     }
@@ -201,7 +223,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
-                val user = auth.currentUser
+//                val user = auth.currentUser
             } else {
                 Toast.makeText(this, response?.error?.message, Toast.LENGTH_LONG).show()
             }

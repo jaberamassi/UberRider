@@ -63,6 +63,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
     // Firebase  Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
+    //Firebase Message
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
 
 //Dexter for permission
     implementation 'com.karumi:dexter:6.2.2'

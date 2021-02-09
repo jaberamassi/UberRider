@@ -133,7 +133,7 @@ class HomeActivity : AppCompatActivity() {
                 .load(Common.currentRider!!.avatar)
                 .into(imgAvatar)
         }
-        //Set an intent to choose image
+        //Set an intent to choose an image
         imgAvatar.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
@@ -166,7 +166,7 @@ class HomeActivity : AppCompatActivity() {
                 if (imageUri !=null){
                     waitingDialog.show()
                     //Create an avatar folder in Storage and subfolder
-                    val avatarFolder = storageReference.child("Riders Avatars/${currentUserUid}")
+                    val avatarFolder = storageReference.child("avatars/${currentUserUid}")
 
                     avatarFolder.putFile(imageUri!!)
                         .addOnProgressListener {taskSnapshot->
@@ -181,7 +181,7 @@ class HomeActivity : AppCompatActivity() {
                             if(uploadTask.isSuccessful){
                                 avatarFolder.downloadUrl.addOnSuccessListener { uri ->
                                     val updateData = HashMap<String,String>()
-                                    updateData["Riders Avatars"] = uri.toString()
+                                    updateData["avatar"] = uri.toString()
 
 
                                     UserUtils.updateUser(drawerLayout,updateData)

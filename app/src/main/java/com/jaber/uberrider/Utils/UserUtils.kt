@@ -7,6 +7,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.jaber.uberrider.common.Common
+import com.jaber.uberrider.model.TokenModel
 
 object UserUtils {
 
@@ -22,14 +23,15 @@ object UserUtils {
             }
     }
 
-//    fun updateToken(context: Context, token: String) {
-//        val tokenModel = TokenModel()
-//        tokenModel.token = token
-//
-//        FirebaseDatabase.getInstance().getReference(Common.TOKEN_REFERENCE)
-//            .child(FirebaseAuth.getInstance().currentUser!!.uid)
-//            .setValue(token)
-//            .addOnFailureListener { e-> Toast.makeText(context,e.message.toString(), Toast.LENGTH_LONG).show() }
-//            .addOnSuccessListener {}
-//    }
+    fun updateToken(context: Context, token: String) {
+        val tokenModel = TokenModel()
+        tokenModel.token = token
+
+        FirebaseDatabase.getInstance()
+            .getReference(Common.TOKEN_REFERENCE)
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .setValue(tokenModel)
+            .addOnFailureListener { e-> Toast.makeText(context,e.message.toString(), Toast.LENGTH_LONG).show() }
+            .addOnSuccessListener {}
+    }
 }
