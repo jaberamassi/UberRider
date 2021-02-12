@@ -35,8 +35,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.jaber.uberrider.R
-import com.jaber.uberrider.callbasck.FirebaseDriverInfoListener
-import com.jaber.uberrider.callbasck.FirebaseFailedListener
+import com.jaber.uberrider.callback.FirebaseDriverInfoListener
+import com.jaber.uberrider.callback.FirebaseFailedListener
 import com.jaber.uberrider.common.Common
 import com.jaber.uberrider.model.DriverGeoModel
 import com.jaber.uberrider.model.DriverInfoModel
@@ -48,7 +48,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
@@ -65,15 +64,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback, FirebaseDriverInfoListener 
     private lateinit var locationCallback: LocationCallback
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    //load Driver
+    //Load Driver lecture#17
     var distance = 1.0
     val LIMIT_RANGE = 10.0
     var previousLocation:Location?=null
     var currentLocation:Location?=null
     var cityName = ""
-
     var isFirstTime = true
-    //Listener
+        //Listener
     lateinit var iFirebaseDriverInfoListener : FirebaseDriverInfoListener
     lateinit var iFirebaseFailedListener : FirebaseFailedListener
 
@@ -208,7 +206,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, FirebaseDriverInfoListener 
             }.addOnSuccessListener {location ->
                 //Load all drivers in city
                 val geoCoder = Geocoder(requireContext(), Locale.getDefault())
-                var addressList: List<Address>
+                val addressList: List<Address>
 
                 try {
                     addressList = geoCoder.getFromLocation(location.latitude,location.longitude,1)
@@ -392,8 +390,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback, FirebaseDriverInfoListener 
                 driverLocation.addValueEventListener(object :ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if(!snapshot.hasChildren()){
-                            if (Common.markerList.get(driverGeoModel!!.key) != null){
-                                val marker = Common.markerList.get(driverGeoModel!!.key)
+                            if (Common.markerList.get(driverGeoModel.key) != null){
+                                val marker = Common.markerList[driverGeoModel.key]
                                 marker!!.remove() // Remove marker from map
                                 Common.markerList.remove(driverGeoModel.key)// Remove marker information
                                 driverLocation.removeEventListener(this)
@@ -402,7 +400,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, FirebaseDriverInfoListener 
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Snackbar.make(requireView(),error.message!!,Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(requireView(), error.message,Snackbar.LENGTH_SHORT).show()
                     }
 
                 })

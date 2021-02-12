@@ -183,7 +183,6 @@ class HomeActivity : AppCompatActivity() {
                                     val updateData = HashMap<String,String>()
                                     updateData["avatar"] = uri.toString()
 
-
                                     UserUtils.updateUser(drawerLayout,updateData)
                                 }
                             }

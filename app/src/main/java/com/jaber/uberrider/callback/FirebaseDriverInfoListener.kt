@@ -1,4 +1,4 @@
-package com.jaber.uberrider.callbasck
+package com.jaber.uberrider.callback
 
 import com.jaber.uberrider.model.DriverGeoModel
 

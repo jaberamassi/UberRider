@@ -17,17 +17,18 @@ import com.jaber.uberrider.model.RiderInfoModel
 import java.lang.StringBuilder
 
 object Common {
-    val markerList: MutableMap<String,Marker> = HashMap<String,Marker>()
-    var driversFound: MutableSet<DriverGeoModel> = HashSet<DriverGeoModel>()
     const val DRIVER_INFO_REFERENCE = "Drivers"
     const val DRIVERS_LOCATION_REFERENCE: String = "driversLocation"
     const val TOKEN_REFERENCE: String = "Token"
-    val RIDERS_LOCATION_REFERENCE: String = "ridersLocation"
-    var currentRider: RiderInfoModel ?= null
+    const val RIDERS_LOCATION_REFERENCE: String = "ridersLocation"
     const val RIDER_INFO_REFERENCE: String = "Riders"
-
     const val NOTIF_TITLE: String = "title"
     const val NOTIF_BODY: String = "body"
+
+    var driversFound: MutableSet<DriverGeoModel> = HashSet<DriverGeoModel>()
+    var markerList: MutableMap<String,Marker> = HashMap<String,Marker>()
+    var currentRider: RiderInfoModel ?= null
+
 
 
     fun showNotification(context: Context, id: Int, title: String?, body: String?, intent: Intent?) {
@@ -68,7 +69,7 @@ object Common {
 
     }
 
-    fun buildName(firstName: String, lastName: String): String? {
+    fun buildName(firstName: String, lastName: String): String {
         return StringBuilder(firstName).append(" ").append(lastName).toString()
     }
 }
